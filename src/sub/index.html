@@ -1,621 +1,182 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Cache-Control" content="no-cache">
-<title>非公式こみゃく視力検査表</title>
+  <meta charset="UTF-8" />
 
-<style>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-body{
-  margin:0;
-  background:#000;
-  font-family:sans-serif;
+  <meta
+    http-equiv="Pragma"
+    content="no-cache"
+  />
 
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  <meta
+    http-equiv="Cache-Control"
+    content="no-cache"
+  />
 
-  /*
-    min-height:100vh;
-    ↓
-    変更
-  */
-  height:100dvh;
+  <title>
+    非公式こみゃく視力検査表
+  </title>
 
-  /*
-    iPhone内部ブラウザ対策
-  */
-  overflow:hidden;
-}
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
 
-svg{
-
-  /*
-    widthはそのまま
-  */
-  width:100vw;
-
-  /*
-    ↓ 削除
-    height:auto;
-    max-height:calc(100vh - 90px);
-    margin:auto;
-  */
-
-  /*
-    残り領域を埋める
-  */
-  flex:1;
-
-  /*
-    flex縮小許可
-  */
-  min-height:0;
-
-  display:block;
-}
-
-.title{
-  font-size:54px;
-  font-weight:bold;
-}
-
-.subtitle{
-  font-size:28px;
-  font-weight:bold;
-}
-
-.label{
-  font-size:28px;
-  font-weight:bold;
-}
-
-footer{
-  color:#ccc;
-  text-align:center;
-
-  /*
-    少し小さめ推奨
-  */
-  font-size:12px;
-
-  line-height:1.5;
-
-  /*
-    iPhone安全領域対応
-  */
-  padding:
-    2px
-    0
-    calc(env(safe-area-inset-bottom) + 4px);
-
-  flex-shrink:0;
-}
-
-footer a{
-  color:#7db7ff;
-  text-decoration:none;
-}
-</style>
 </head>
 
 <body>
 
-<svg
-  id="svg"
-  viewBox="0 0 1200 1350"
->
-
-  <!-- 背景 -->
-  <rect
-    x="20"
-    y="20"
-    width="1160"
-    height="1290"
-    rx="60"
-    fill="#efefef"
-  />
-
-  <!-- タイトル -->
-  <text
-    x="110"
-    y="110"
-    class="title"
+  <svg
+    id="svg"
+    viewBox="0 0 1200 1350"
   >
-    非公式こみゃく視力検査表
-  </text>
-
-  <text
-    x="760"
-    y="110"
-    class="subtitle"
-  >
-    （こみゃくの向く向きで検査）
-  </text>
-
-</svg>
-
-<script>
-
-const svg = document.getElementById("svg");
-
-/* =========================
-   SVG生成
-   ========================= */
-
-function el(name){
-  return document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    name
-  );
-}
-
-/* =========================
-   方向
-   ========================= */
-
-const dirs = [
-  { x: 1,  y: 0  },
-  { x: 1,  y:-1  },
-  { x: 0,  y:-1  },
-  { x:-1,  y:-1  },
-  { x:-1,  y: 0  },
-  { x:-1,  y: 1  },
-  { x: 0,  y: 1  },
-  { x: 1,  y: 1  }
-];
-
-/* =========================
-   行設定
-   ========================= */
-
-const rows = [
-  { label:"0.1", scale:2.6, rowHeight:150 },
-  { label:"0.2", scale:1.5, rowHeight:110 },
-  { label:"0.3", scale:1.0, rowHeight:85 },
-  { label:"0.4", scale:0.78, rowHeight:72 },
-  { label:"0.5", scale:0.62, rowHeight:62 },
-  { label:"0.6", scale:0.50, rowHeight:55 },
-  { label:"0.7", scale:0.42, rowHeight:50 },
-  { label:"0.8", scale:0.36, rowHeight:46 },
-  { label:"0.9", scale:0.31, rowHeight:42 },
-  { label:"1.0", scale:0.27, rowHeight:38 },
-  { label:"1.2", scale:0.23, rowHeight:34 },
-  { label:"1.5", scale:0.19, rowHeight:30 },
-  { label:"2.0", scale:0.15, rowHeight:26 },
-  { label:"4.0", scale:0.09, rowHeight:20 }
-];
-
-/* =========================
-   テーブル位置
-   ========================= */
-
-const tableLeft = 320;
-const tableRight = 1120;
-
-const cols = 5;
-
-const colWidth =
-  (tableRight - tableLeft) / (cols - 1);
-
-let currentY = 240;
-
-/* =========================
-   全こみゃく
-   ========================= */
-
-const komyakus = [];
-
-/* =========================
-   こみゃく生成
-   ========================= */
-
-function createKomyaku(
-  x,
-  y,
-  scale,
-  dirX,
-  dirY
-){
-
-  const group = el("g");
-
-  const exp = {
-    dirX,
-    dirY,
-    blink: 0,
-    eyeX: 0,
-    eyeY: 0,
-    jump: 0
-  };
 
-  /*
-    基本値
-  */
+    <!-- 背景 -->
 
-  const baseX = 30;
-  const baseY = 30;
+    <rect
+      x="20"
+      y="20"
+      width="1160"
+      height="1290"
+      rx="60"
+      fill="#efefef"
+    />
 
-  const outer = 20;
-  const middle = outer / 2;
-  const pupil = outer / 5;
+    <!-- タイトル -->
 
-  /*
-    黒
-  */
+    <text
+      x="110"
+      y="110"
+      class="title"
+    >
+      非公式こみゃく視力検査表
+    </text>
 
-  const outerCircle = el("circle");
+    <text
+      x="760"
+      y="110"
+      class="subtitle"
+    >
+      （こみゃくの向く向きで検査）
+    </text>
 
-  outerCircle.setAttribute(
-    "cx",
-    baseX
-  );
+  </svg>
 
-  outerCircle.setAttribute(
-    "cy",
-    baseY
-  );
+  <!-- =========================
+       検査UI
+  ========================= -->
 
-  outerCircle.setAttribute(
-    "r",
-    outer
-  );
+  <div id="examUI">
 
-  outerCircle.setAttribute(
-    "fill",
-    "#000"
-  );
+    <button id="startBtn">
+      視力検査開始
+    </button>
 
-  group.appendChild(outerCircle);
+    <div id="status"></div>
 
-  /*
-    白目グループ
-  */
+    <div id="answerPad">
 
-  const eyeGroup = el("g");
+      <button data-dir="upleft">
+        ↖
+      </button>
 
-  /*
-    白目
-  */
+      <button data-dir="up">
+        ↑
+      </button>
 
-  const white = el("circle");
+      <button data-dir="upright">
+        ↗
+      </button>
 
-  white.setAttribute("cx", 0);
-  white.setAttribute("cy", 0);
+      <button data-dir="left">
+        ←
+      </button>
 
-  white.setAttribute(
-    "r",
-    middle
-  );
+      <div class="padCenter"></div>
 
-  white.setAttribute(
-    "fill",
-    "#fff"
-  );
-
-  eyeGroup.appendChild(white);
+      <button data-dir="right">
+        →
+      </button>
 
-  /*
-    青瞳
-  */
+      <button data-dir="downleft">
+        ↙
+      </button>
 
-  const blue = el("circle");
+      <button data-dir="down">
+        ↓
+      </button>
 
-  blue.setAttribute(
-    "r",
-    pupil
-  );
+      <button data-dir="downright">
+        ↘
+      </button>
 
-  blue.setAttribute(
-    "fill",
-    "#3d6fb6"
-  );
-
-  eyeGroup.appendChild(blue);
-
-  group.appendChild(eyeGroup);
-
-  svg.appendChild(group);
-
-  const k = {
-    group,
-    eyeGroup,
-    blue,
-    exp,
-    scale,
-    x,
-    y
-  };
+    </div>
 
-  komyakus.push(k);
+  </div>
 
-  redraw(k);
+  <!-- Google Analytics -->
 
-  return k;
-}
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-VCHEJ575KM"
+  ></script>
 
-/* =========================
-   再描画
-   ========================= */
+  <script>
 
-function redraw(k){
+    window.dataLayer =
+      window.dataLayer || [];
 
-  const exp = k.exp;
-
-  /*
-    中心補正
-  */
-
-  const offset =
-    30 * k.scale;
-
-  /*
-    本体
-  */
-
-  k.group.setAttribute(
-    "transform",
-    `
-    translate(
-      ${k.x - offset},
-      ${k.y - offset - exp.jump}
-    )
-    scale(${k.scale})
-    `
-  );
-
-  /*
-    ユーザー提供ロジック
-  */
-
-  const outer = 20;
-
-  const eyeOffsetX =
-    exp.dirX * outer / 3;
-
-  const eyeOffsetY =
-    exp.dirY * outer / 3;
-
-  /*
-    白目
-  */
-
-  k.eyeGroup.setAttribute(
-    "transform",
-    `
-    translate(
-      ${30 + eyeOffsetX},
-      ${30 + eyeOffsetY}
-    )
-    scale(
-      1,
-      ${1 - exp.blink}
-    )
-    `
-  );
-
-  /*
-    青瞳
-  */
-
-  const middle = outer / 2;
-
-  k.blue.setAttribute(
-    "cx",
-    exp.dirX * middle / 3 + exp.eyeX
-  );
-
-  k.blue.setAttribute(
-    "cy",
-    exp.dirY * middle / 3 + exp.eyeY
-  );
-}
-
-/* =========================
-   瞬き
-   ========================= */
-
-function blink(k){
-
-  let t = 0;
-
-  const id = setInterval(()=>{
-
-    k.exp.blink =
-      Math.sin(Math.PI * t);
-
-    redraw(k);
-
-    t += 0.2;
-
-    if(t >= 1){
-
-      k.exp.blink = 0;
-
-      redraw(k);
-
-      clearInterval(id);
+    function gtag(){
+      dataLayer.push(arguments);
     }
 
-  }, 40);
-}
-
-/* =========================
-   きょろきょろ
-   ========================= */
-
-function lookAround(k){
-
-  const seq = [
-    [-2,0],
-    [2,0],
-    [0,2],
-    [0,-2],
-    [0,0]
-  ];
-
-  let i = 0;
-
-  const id = setInterval(()=>{
-
-    k.exp.eyeX = seq[i][0];
-    k.exp.eyeY = seq[i][1];
-
-    redraw(k);
-
-    i++;
-
-    if(i >= seq.length){
-
-      clearInterval(id);
-    }
-
-  }, 500);
-}
-
-/* =========================
-   ジャンプ
-   ========================= */
-
-function hop(k){
-
-  let t = 0;
-
-  const id = setInterval(()=>{
-
-    k.exp.jump =
-      Math.sin(Math.PI * t) * 10;
-
-    redraw(k);
-
-    t += 0.15;
-
-    if(t >= 1){
-
-      k.exp.jump = 0;
-
-      redraw(k);
-
-      clearInterval(id);
-    }
-
-  }, 30);
-}
-
-/* =========================
-   アイドル開始
-   ========================= */
-
-function startIdle(k){
-
-  const initialDelay =
-    500 + Math.random() * 3000;
-
-  setTimeout(()=>{
-
-    setInterval(()=>{
-
-      const r = Math.random();
-
-      if(r < 0.05){
-
-        blink(k);
-
-      }else if(r < 0.25){
-
-        lookAround(k);
-
-      }else if(r < 0.45){
-
-        hop(k);
-      }
-
-    }, 2000 + Math.random() * 4000);
-
-  }, initialDelay);
-}
-
-/* =========================
-   描画
-   ========================= */
-
-rows.forEach((row)=>{
-
-  const centerY = currentY;
-
-  /*
-    ラベル
-  */
-
-  const label = el("text");
-
-  label.setAttribute("x", 60);
-
-  label.setAttribute(
-    "y",
-    centerY + 12
-  );
-
-  label.setAttribute(
-    "class",
-    "label"
-  );
-
-  label.textContent =
-    row.label;
-
-  svg.appendChild(label);
-
-  /*
-    各列
-  */
-
-  for(let col=0; col<cols; col++){
-
-    const centerX =
-      tableLeft + col * colWidth;
-
-    const dir =
-      dirs[
-        Math.floor(
-          Math.random() * dirs.length
-        )
-      ];
-
-    const k = createKomyaku(
-      centerX,
-      centerY,
-      row.scale,
-      dir.x,
-      dir.y
+    gtag(
+      'js',
+      new Date()
     );
 
-    startIdle(k);
-  }
+    gtag(
+      'config',
+      'G-VCHEJ575KM'
+    );
 
-  currentY += row.rowHeight;
-});
+  </script>
 
-</script>
+  <footer id="footer">
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-VCHEJ575KM"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    &copy;
 
-  gtag('config', 'G-VCHEJ575KM');
-</script>
+    <a
+      href="https://x.com/hideko"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      @hideko
+    </a>
 
-  <footer>
-    &copy;<a href="https://x.com/hideko" target="_blank" rel="noopener noreferrer">@hideko</a> <br />
+    <br />
+
     ※公式の大阪・関西万博協会とは関係ありません。<br>
-    ※公式キャラクターを用いた二次創作です。 <br />
-    <a href="http://homepage1.canvas.ne.jp/hdksc/" target="_blank" rel="noopener noreferrer">非公式万博ゲームシリーズはこちら</a>
+
+    ※公式キャラクターを用いた二次創作です。<br />
+
+    <a
+      href="http://homepage1.canvas.ne.jp/hdksc/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      非公式万博ゲームシリーズはこちら
+    </a>
+
   </footer>
+
+  <script src="script.js"></script>
+  <script src="exam.js"></script>
+
 </body>
 </html>
