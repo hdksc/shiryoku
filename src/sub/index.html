@@ -18,15 +18,44 @@ body{
   flex-direction:column;
   align-items:center;
 
-  min-height:100vh;
+  /*
+    min-height:100vh;
+    ↓
+    変更
+  */
+  height:100dvh;
+
+  /*
+    iPhone内部ブラウザ対策
+  */
+  overflow:hidden;
 }
 
 svg{
+
+  /*
+    widthはそのまま
+  */
   width:100vw;
-  height:auto;
-  max-height:calc(100vh - 90px);
+
+  /*
+    ↓ 削除
+    height:auto;
+    max-height:calc(100vh - 90px);
+    margin:auto;
+  */
+
+  /*
+    残り領域を埋める
+  */
+  flex:1;
+
+  /*
+    flex縮小許可
+  */
+  min-height:0;
+
   display:block;
-  margin:auto;
 }
 
 .title{
@@ -48,13 +77,20 @@ footer{
   color:#ccc;
   text-align:center;
 
-  font-size:14px;
-  line-height:1.7;
+  /*
+    少し小さめ推奨
+  */
+  font-size:12px;
 
+  line-height:1.5;
+
+  /*
+    iPhone安全領域対応
+  */
   padding:
-    8px
+    2px
     0
-    18px;
+    calc(env(safe-area-inset-bottom) + 4px);
 
   flex-shrink:0;
 }
