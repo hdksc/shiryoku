@@ -23,6 +23,18 @@ const answerButtons =
     "#answerPad button"
   );
 
+/* =========================
+   検査設定
+========================= */
+
+const PASS_COUNT = 1;
+
+const FAIL_COUNT = 2;
+
+/* =========================
+   目
+========================= */
+
 const eyes = [
   "左目",
   "右目"
@@ -81,8 +93,8 @@ function startStage(){
     `
     ${eyes[eyeIndex]}
     ${rows[rowIndex].label}
-    正:${success}/2
-    誤:${fail}/2
+    正:${success}/${PASS_COUNT}
+    誤:${fail}/${FAIL_COUNT}
     `;
 
   askQuestion();
@@ -195,10 +207,10 @@ answerButtons.forEach(btn=>{
       }
 
       /* =========================
-         2回成功
+         合格
       ========================= */
 
-      if(success >= 2){
+      if(success >= PASS_COUNT){
 
         rowIndex++;
 
@@ -222,10 +234,10 @@ answerButtons.forEach(btn=>{
       }
 
       /* =========================
-         2回失敗で確定
+         不合格
       ========================= */
 
-      if(fail >= 2){
+      if(fail >= FAIL_COUNT){
 
         const result =
 
@@ -248,8 +260,8 @@ answerButtons.forEach(btn=>{
         `
         ${eyes[eyeIndex]}
         ${rows[rowIndex].label}
-        正:${success}/2
-        誤:${fail}/2
+        正:${success}/${PASS_COUNT}
+        誤:${fail}/${FAIL_COUNT}
         `;
 
       askQuestion();
@@ -389,9 +401,9 @@ startBtn.addEventListener(
 ・赤枠の
   こみゃくの向きを答える
 
-・2回正解で次へ
+・${PASS_COUNT}回正解で次へ
 
-・2回間違えると
+・${FAIL_COUNT}回間違えると
   その一つ前の視力で確定
 
 まずは左目です。
@@ -410,7 +422,9 @@ startBtn.addEventListener(
 
     statusEl.innerHTML =
       `
-      左目 0.1 正:0/2 誤:0/2
+      左目 0.1
+      正:0/${PASS_COUNT}
+      誤:0/${FAIL_COUNT}
       `;
 
     startBtn.style.display =
